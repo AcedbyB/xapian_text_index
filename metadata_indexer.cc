@@ -3,6 +3,8 @@
 #include <sstream>
 #include<string>
 #include <iostream>
+#include <chrono>
+
 using namespace std;
 
 set<string> stopwords;
@@ -48,7 +50,7 @@ int main(int argc, char **argv) {
         // cout << stopword << endl;
         stopwords.insert(line);
     }
-
+    auto start = chrono::steady_clock::now();
     // Create or open the database
     Xapian::WritableDatabase db(index_name, Xapian::DB_CREATE_OR_OPEN);
     Xapian::Document doc;
@@ -60,6 +62,7 @@ int main(int argc, char **argv) {
         input.push_back(line);
     }
  
+    int lineno = 0;
     for(int i = 0; i < input.size(); i+=2) {
         // cout << "dataset " << lineno << ": ";
         string name = input[i];
@@ -87,8 +90,15 @@ int main(int argc, char **argv) {
         }
         // cout << endl;
         db.add_document(doc);
-        // if(lineno % 1000 == 0) {
-        db.commit();
-        // }
+        lineno += 1;
+        if(lineno % 1000 == 0) {
+            db.commit();
+        }
     }
+    db.commit();
+    auto end = chrono::steady_clock::now();
+    
+    cout << "TIME : "
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << "milliseconds" << endl;
 }
