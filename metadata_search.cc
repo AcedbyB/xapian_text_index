@@ -3,7 +3,9 @@
 #include <sstream>
 #include<string>
 #include <iostream>
+#include<chrono>
 using namespace std;
+
 set<string> needed_words;
 
 string highlight(string s) {
@@ -13,7 +15,7 @@ string highlight(string s) {
     // Filter words and check if it is matched
     for(std::string::size_type i = 0; i < s.size(); i++)
     {
-        if(isalnum(s[i])){
+        if( (s[i] <= 'z' && s[i] >= 'a') || (s[i] >= '0' && s[i] <= '9') ){
             temp+=s[i];
         }
         else
@@ -26,7 +28,7 @@ string highlight(string s) {
             {
                 ret = ret + temp;
             }
-            ret = ret + " ";
+            ret = ret + s[i];
             temp = "";
         }
     }
@@ -76,15 +78,23 @@ int main(int argc, char **argv) {
         or_query
     );	
 
+    auto start = chrono::steady_clock::now();
+
     //Start the query
     Xapian::Enquire enquire(db);
     enquire.set_query(query);
  
     Xapian::MSet matches = enquire.get_mset(0, topk); 
     printf("mset size is %d\n", matches.size());
+
+    auto end = chrono::steady_clock::now();
     
     for(Xapian::MSetIterator match = matches.begin();  match != matches.end(); match ++) {
         Xapian::Document doc = match.get_document();
-        cout << highlight(doc.get_value(1)) << endl << highlight(doc.get_value(0)) <<endl;
+        cout << highlight(doc.get_value(0)) << endl << highlight(doc.get_value(1)) <<endl<<endl;
     }
+    
+    cout << "TIME : "
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << "milliseconds" << endl;
 }
