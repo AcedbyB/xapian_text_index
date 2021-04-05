@@ -4,6 +4,35 @@
 #include<string>
 #include <iostream>
 using namespace std;
+set<string> needed_words;
+
+string highlight(string s) {
+    string ret = "";
+    string temp = "";
+
+    // Filter words and check if it is matched
+    for(std::string::size_type i = 0; i < s.size(); i++)
+    {
+        if(isalnum(s[i])){
+            temp+=s[i];
+        }
+        else
+        {   
+            if(temp != "" && needed_words.find(temp)!=needed_words.end())
+            {
+                ret = ret + "==" + temp + "==";
+            }
+            else 
+            {
+                ret = ret + temp;
+            }
+            ret = ret + " ";
+            temp = "";
+        }
+    }
+    
+    return ret;
+}
 
 int main(int argc, char **argv) {
     if (argc < 3) {
@@ -25,6 +54,8 @@ int main(int argc, char **argv) {
             and_terms.push_back(cur);
         }
         else or_terms.push_back(cur);
+
+        needed_words.insert(cur);
     }
     
     Xapian::Query or_query(
@@ -54,6 +85,6 @@ int main(int argc, char **argv) {
     
     for(Xapian::MSetIterator match = matches.begin();  match != matches.end(); match ++) {
         Xapian::Document doc = match.get_document();
-        cout << doc.get_value(1) << endl << doc.get_value(0)<<endl;
+        cout << highlight(doc.get_value(1)) << endl << highlight(doc.get_value(0)) <<endl;
     }
 }
