@@ -15,14 +15,14 @@ string highlight(string s) {
     // Filter words and check if it is matched
     for(std::string::size_type i = 0; i < s.size(); i++)
     {
-        if( (s[i] <= 'z' && s[i] >= 'a') || (s[i] >= '0' && s[i] <= '9') ){
+        if( isalnum(s[i]) ){
             temp+=s[i];
         }
         else
         {   
             if(temp != "" && needed_words.find(temp)!=needed_words.end())
             {
-                ret = ret + "==" + temp + "==";
+                ret = ret + "===" + temp + "===";
             }
             else 
             {
