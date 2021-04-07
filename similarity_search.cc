@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
         vector<string> terms;
 
         while (getline(infile, line)) {
+            //cout<<line<<endl;
             terms.push_back(line);
         }
     
@@ -40,18 +41,19 @@ int main(int argc, char **argv) {
         //Start the query
         Xapian::Enquire enquire(db);
         enquire.set_query(query);
-    
         Xapian::MSet matches = enquire.get_mset(0, topk); 
-        printf("mset size is %d\n", matches.size());
         auto end = chrono::steady_clock::now();
+
+        printf("mset size is %d\n", matches.size());
         
         cout << "TIME : "
-            << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-            << "milliseconds" << endl;
+            << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
+            << "nanoseconds" << endl;
         
-        auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        //cout<<duration<<endl;
         duration_total += duration;
     }
-
-    cout<<"Average time is: "<<duration_total/30<<endl;
+    double average = duration_total*1.0/(30.0*1e6);
+    cout<<"Average time is: "<<average<<" millisecond"<<endl;
 }

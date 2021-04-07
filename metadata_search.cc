@@ -53,9 +53,13 @@ int main(int argc, char **argv) {
         string cur = argv[i];
         if(sign == '+') {
             cur = cur.substr(1, (int)cur.size());
+            cout<<cur<<endl;
             and_terms.push_back(cur);
         }
-        else or_terms.push_back(cur);
+        else {
+            cout<<cur<<endl;
+            or_terms.push_back(cur);
+        }
 
         needed_words.insert(cur);
     }
@@ -77,6 +81,9 @@ int main(int argc, char **argv) {
         and_query,
         or_query
     );	
+    
+    if(!or_terms.size()) query = and_query;
+    else if(!and_terms.size()) query = or_query;
 
     auto start = chrono::steady_clock::now();
 
@@ -95,6 +102,6 @@ int main(int argc, char **argv) {
     }
     
     cout << "TIME : "
-        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-        << "milliseconds" << endl;
+        << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
+        << "nanoseconds" << endl;
 }
