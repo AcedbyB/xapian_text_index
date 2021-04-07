@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
     //Combine 2 query with an AND
     Xapian::Query query(
-        Xapian::Query::OP_AND,
+        Xapian::Query::OP_AND_MAYBE,
         and_query,
         or_query
     );	
@@ -101,7 +101,9 @@ int main(int argc, char **argv) {
         cout << highlight(doc.get_value(0)) << endl << highlight(doc.get_value(1)) <<endl<<endl;
     }
     
+    auto nanosec = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    double duration = nanosec*1.0/(1e6 * 1.0);
     cout << "TIME : "
-        << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
-        << "nanoseconds" << endl;
+        << duration
+        << "milliseconds" << endl;
 }
